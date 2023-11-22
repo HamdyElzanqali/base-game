@@ -1,0 +1,11 @@
+name = "base-game"
+default_targets = ["win32", "win64", "lovejs"]
+build_directory = "build"
+
+# also accepts .svg files
+icon_file = "icon.png"
+
+love_files = [
+    "::git-ls-tree::",
+    "-*/.*",
+]
