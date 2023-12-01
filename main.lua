@@ -18,7 +18,7 @@ love.graphics.setLineStyle("rough")
 Camera:setBaseSize(160, 90, true)
 Camera:setPivot(0.5, 0.5)
 --Camera:setBorders(true)
---Camera:setCanvas(true)
+Camera:setCanvas(true) -- simple pixel effect
 
 local charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890':\"()[] !,-|_+/*\\?.%@><"
 Global.fonts = {
