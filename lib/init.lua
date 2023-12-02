@@ -9,7 +9,9 @@ Input       = require 'lib.input'
 Gamedata    = require 'lib.gamedata'
 Resource    = require 'lib.resource'
 Camera      = require 'lib.camera'
+Physics     = require 'lib.physics'
 Global      = {}
 
 -- Custom Types
 object      = require 'lib.object'
+sprite      = require 'lib.sprite'

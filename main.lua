@@ -18,7 +18,7 @@ love.graphics.setLineStyle("rough")
 Camera:setBaseSize(160, 90, true)
 Camera:setPivot(0.5, 0.5)
 --Camera:setBorders(true)
-Camera:setCanvas(true) -- simple pixel effect
+--Camera:setCanvas(true) -- simple pixel effect
 
 local charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890':\"()[] !,-|_+/*\\?.%@><"
 Global.fonts = {
@@ -30,6 +30,10 @@ love.graphics.setFont(Global.fonts.normal)
 function love.load()
     -- Load the starting room
     Room:load("room")
+    
+    -- Initialize physics world
+    love.physics.setMeter(10)
+    Physics:init()
 end
 
 function love.update(dt)
@@ -44,6 +48,9 @@ function love.update(dt)
 
     -- Reset input state 
     Input:update(dt)
+
+    -- Update the physics world
+    Physics:update(dt)
 end
 
 -- Draw is called once on draw
