@@ -833,6 +833,11 @@ local function unbindGamepadAxis(action, ...)
     return action
 end
 
+local function unbindAll(action)
+    action.bound = {}
+    action.axisBound = {}
+end
+
 local function checkAxis(action, gamepad)
     local result = 0
 
@@ -883,19 +888,76 @@ local function checkAxisRaw(action, gamepad)
     return 0
 end
 
-local function check(action, gamepad)
+local _pressed = {
+    keyDown = "keyPressed",
+    keyReleased = "keyPressed",
+    mouseDown = "mousePressed",
+    mouseReleased = "mousePressed",
+    gamepadDown = "gamepadPressed",
+    gamepadReleased = "gamepadPressed",
+}
+
+local _released = {
+    keyDown = "keyReleased",
+    keyPressed = "keyReleased",
+    mouseDown = "mouseReleased",
+    mousePressed = "mouseReleased",
+    gamepadDown = "gamepadReleased",
+    gamepadPressed = "gamepadReleased",
+}
+
+local _down = {
+    keyPressed = "keyDown",
+    keyReleased = "keyDown",
+    mousePressed = "mouseDown",
+    mouseReleased = "mouseDown",
+    gamepadPressed = "gamepadDown",
+    gamepadReleased = "gamepadDown",
+}
+
+local function _replace(name, variant)
+    local len = #variant
+
+    if len == 4 then
+        name = _down[name] or name
+    elseif len == 7 then
+        name = _pressed[name] or name
+    elseif len == 8 then
+        name = _released[name] or name
+    end
+
+    return name
+end
+
+local function check(action, gamepad, variant)
     if gamepad then
         for name, _ in pairs(action.bound) do
             local target = action.bound[name]
+            
+            if variant then
+                name = _replace(name, variant)
+            end
+
             if target then
-                if input[name](input, gamepad, select(2, unpack(target))) then
-                    return true
+                if string.sub(name, 1, 7) == "gamepad" then
+                    if input[name](input, gamepad, select(2, unpack(target))) then
+                        return true
+                    end
+                else
+                    if input[name](input, unpack(target)) then
+                        return true
+                    end
                 end
             end
         end
     else
         for name, _ in pairs(action.bound) do
             local target = action.bound[name]
+
+            if variant then
+                name = _replace(name, variant)
+            end
+
             if target then
                 if input[name](input, unpack(target)) then
                     return true
@@ -985,6 +1047,8 @@ action = function()
         unbindGamepadReleased = unbindGamepadReleased,
         unbindGamepadAxis = unbindGamepadAxis,
 
+        unbindAll = unbindAll,
+
         check = check,
         checkAxis = checkAxis,
         checkAxisRaw = checkAxisRaw,
@@ -1021,6 +1085,24 @@ function input:get(action, gamepad)
     end
 end
 
+function input:getPressed(action, gamepad)
+    if self.actions[action] then
+        return self.actions[action]:check(gamepad, "pressed")
+    end
+end
+
+
+function input:getReleased(action, gamepad)
+    if self.actions[action] then
+        return self.actions[action]:check(gamepad, "released")
+    end
+end
+
+function input:getDown(action, gamepad)
+    if self.actions[action] then
+        return self.actions[action]:check(gamepad, "down")
+    end
+end
 function input:getAxis(action, gamepad)
     if self.actions[action] then
         return self.actions[action]:checkAxis(gamepad)

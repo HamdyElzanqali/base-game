@@ -1,11 +1,20 @@
 local sprite = object:extend()
 
 function sprite.createGrid(image, width, height, spacing, margin)
-    local grid = {width = width, height = height, spacing = spacing, margin = margin}
+    spacing = spacing or 0
+    margin = margin or 0
+
     local img = Resource:image(image)
-    grid.image = img
     local imageWidth, imageHeight = img:getDimensions()
 
+    local grid = {
+        width = width,
+        height = height,
+        spacing = spacing,
+        margin = margin,
+        image = img
+    }
+    
     local pos = 1
     for y = margin, imageHeight, height + spacing do
         for x = margin, imageWidth, width + spacing do
@@ -17,6 +26,8 @@ function sprite.createGrid(image, width, height, spacing, margin)
 
     return grid
 end
+
+
 
 function sprite.framesFromGrid(grid, ...)
     local frames = {
@@ -56,11 +67,10 @@ function sprite:new()
     self.timer = 0
 end
 
-function sprite:addAnimation(name, frames, frameTime, once)
+function sprite:addAnimation(name, frames, frameTime)
     self.animations[name] = {
         frames = frames,
-        duration = frameTime,
-        loop = not once
+        duration = frameTime or 0,
     }
 end
 
@@ -69,8 +79,6 @@ function sprite:setAnimation(name)
         self.currentAnimation = self.animations[name]
         self.frame = 1
         self.timer = 0
-    else
-        error("Animation '" .. name .. "' does not exist")
     end
 end
 
@@ -82,6 +90,7 @@ function sprite:update(dt)
             self.frame = self.frame + 1
             if self.frame > self.currentAnimation.frames.length then
                 if self.currentAnimation.loop then
+                    self:onFinish()
                     self.frame = 1
                 else
                     self.frame = self.currentAnimation.frames.length
@@ -101,5 +110,8 @@ function sprite:draw(x, y, r, sx, sy, ox, oy, kx, ky)
         end
     end
 end
+
+-- CALLBACKS
+function sprite:onFinish() end
 
 return sprite

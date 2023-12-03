@@ -80,7 +80,12 @@ end
 
 -- perform queued actions on the start of the frame
 local function runQueue()
-    for i = 1, queueSize, 1 do
+    -- we use a while loop because the queue can be modified while running
+    -- e.g. an object that creates another object in the start event
+    local i = 0
+    while i < queueSize do
+        i = i + 1
+
         queueFunction[queueAction[i]](queue[i], queueLayer[i])
         
         -- reset the queue
