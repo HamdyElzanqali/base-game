@@ -16,8 +16,8 @@ function sprite.createGrid(image, width, height, spacing, margin)
     }
     
     local pos = 1
-    for y = margin, imageHeight, height + spacing do
-        for x = margin, imageWidth, width + spacing do
+    for y = margin, imageHeight - 1, height + spacing do
+        for x = margin, imageWidth - 1, width + spacing do
             local quad = love.graphics.newQuad(x, y, width, height, imageWidth, imageHeight)
             grid[pos] = quad
             pos = pos + 1
