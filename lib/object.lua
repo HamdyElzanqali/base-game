@@ -18,7 +18,12 @@ end
 
 -- remove the object from in the next frame
 function object:destroy()
+    if self._dead then
+        return
+    end
+
     Room._queueRemove(self)
+    self._dead = true
 end
 
 -- set the layer of the object

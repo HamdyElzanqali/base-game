@@ -186,7 +186,7 @@ function room:load(room)
     local path = self.path .. room .. ".lua"
 
     -- load the room from file
-    loadRoom = loadfile(path)
+    loadRoom = love.filesystem.load(path)
 
     if not loadRoom then
         error('"' .. room .. '" at [' .. path .. "] does not exist.")

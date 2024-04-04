@@ -67,10 +67,11 @@ function sprite:new()
     self.timer = 0
 end
 
-function sprite:addAnimation(name, frames, frameTime)
+function sprite:addAnimation(name, frames, frameTime, once)
     self.animations[name] = {
         frames = frames,
         duration = frameTime or 0,
+        loop = not once,
     }
 end
 
@@ -89,8 +90,8 @@ function sprite:update(dt)
             self.timer = self.timer - self.currentAnimation.duration
             self.frame = self.frame + 1
             if self.frame > self.currentAnimation.frames.length then
+                self:onFinish()
                 if self.currentAnimation.loop then
-                    self:onFinish()
                     self.frame = 1
                 else
                     self.frame = self.currentAnimation.frames.length
